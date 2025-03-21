@@ -1,11 +1,14 @@
 import { useNode } from '@craftjs/core';
-import {Grid2 as Grid, Slider, RadioGroup, FormGroup, TextField, FormControl, InputLabel, Select, MenuItem, FormControlLabel, Checkbox} from '@mui/material';
+import {Grid2 as Grid, Slider, RadioGroup, FormGroup, TextField, FormControl, InputLabel, Select, MenuItem, FormControlLabel, Checkbox, InputAdornment, IconButton} from '@mui/material';
 import * as React from 'react';
 
 import { ToolbarDropdown } from './ToolbarDropdown';
 import { ToolbarTextInput } from './ToolbarTextInput';
 import { ToolbarRadio } from './ToolbarRadio';
 import { ToolbarSelectItem } from './ToolbarSelectItem';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faIcons } from '@fortawesome/free-solid-svg-icons';
+import IconSelectorDialog from 'components/dialogs/IconSelectorDialog';
 
 export type ToolbarItemProps = {
   prefix?: string;
@@ -50,6 +53,19 @@ export const ToolbarItem = ({
     console.log("Options data has changed:", optionsData);
   }, [optionsData]);
   
+  // State for managing the dialog
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+
+  // Handle icon selection
+  const handleIconSelect = (iconName) => {
+    setProp((props) => {
+      if (Array.isArray(propValue)) {
+        props[propKey][index] = iconName;
+      } else {
+        props[propKey] = iconName;
+      }
+    }, 500);
+  };
 
   return (
     <Grid size={{ xs: full ? 12 : 6 }}>
@@ -202,7 +218,30 @@ export const ToolbarItem = ({
               </Select>
             </FormControl>
           </>
-        )  : null}
+        )  : type === 'icon' ? (
+          <>
+            <TextField
+              fullWidth
+              style={{maxWidth:'400px', minWidth:'200px'}}
+              value={value || ''}
+              InputProps={{
+                readOnly: true, // Make the input read-only
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setDialogOpen(true)}>
+                      <FontAwesomeIcon icon={faIcons} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <IconSelectorDialog
+              open={dialogOpen}
+              onClose={() => setDialogOpen(false)}
+              onSelect={handleIconSelect}
+            />
+          </>
+        ) : null}
       </div>
     </Grid>
   );

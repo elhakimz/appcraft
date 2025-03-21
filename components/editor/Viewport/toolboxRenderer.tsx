@@ -41,15 +41,15 @@ const icons = {
   "Text": "Type",
   "Button": "faStop",
   "Checkbox": "faSquareCheck",
-  "Select": "faCircle",
+  "Select": "faSquareCaretDown",
   "GroupRadio": "faCircleDot",
   "Rating": "faStar",
   "Container": "faSquare",
   "ToggleButtonGroup": "faSquare",
   "Slider": "faSliders", 
   "Switch": "faToggleOn" ,
-  "TransferList": "faListUl", 
-  "Card": "faSquare" // Add this line
+  "TransferList": "faListAlt", 
+  "Card": "faAddressCard" // Add this line
 };
 
 // Update the controlToolRenderer function
@@ -63,8 +63,6 @@ function controlToolRenderer(title:string, element:any, create:any) {
                element === ToggleButtonGroup ? <ToggleButtonGroup /> :
                element === Slider ? <Slider /> :
                element === Switch ? <Switch /> :
-               element === TransferList ? <TransferList /> :
-               element === Card ? <Card /> : // Add this line
                element;
   
   const iconObject=  getIcon(icons[element.craft.displayName])
@@ -117,7 +115,7 @@ function containerToolRenderer(title:string,element:any, create:any){
 }
 export function toolboxRenderer(title: string,element: any, create:any) {
     return(
-      element===Container || element===GroupButton || element === Card ? containerToolRenderer(title,element,create)
+      element===Container || element===GroupButton || element === Card || element ===TransferList ? containerToolRenderer(title,element,create)
       :controlToolRenderer(title,element,create)
     )
 

@@ -6,10 +6,15 @@ import {styled} from 'styled-components';
 import {ButtonSettings} from './ButtonSettings';
 
 import {Text} from '../Text';
+import { getIcon } from 'utils/iconUtils';
+import { get } from 'http';
+import { Icon } from '@mui/material';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 type ButtonProps = {
+    icon?: string;
     background?: Record<'r' | 'g' | 'b' | 'a', number>;
-    color?: Record<'r' | 'g' | 'b' | 'a', number>;
+    color?: string;
     buttonStyle?: string;
     variant?: string;
     margin?: any[];
@@ -28,15 +33,7 @@ type StyledButtonProps = {
 
 
 const StyledButton = styled.button<StyledButtonProps>`
-    background: ${(props) =>
-            props.$buttonStyle === 'full'
-                    ? `rgba(${Object.values(props.$background)})`
-                    : 'transparent'};
-    border: 2px solid transparent;
-    border-color: ${(props) =>
-            props.$buttonStyle === 'outline'
-                    ? `rgba(${Object.values(props.$background)})`
-                    : 'transparent'};
+    
     margin: ${({$margin}) =>
             `${$margin[0]}px ${$margin[1]}px ${$margin[2]}px ${$margin[3]}px`};
     
@@ -44,20 +41,23 @@ const StyledButton = styled.button<StyledButtonProps>`
 `;
 
 export const Button = ({
-                                                       text,
-                                                       textComponent,
-                                                       color,
-                                                       buttonStyle,
-                                                       background,
-                                                       margin,
-                                                       variant,
-                                                   }: ButtonProps) => {
+                            text,
+                            textComponent,
+                            color,
+                            buttonStyle,
+                            background,
+                            margin,
+                            variant,
+                            icon
+                        }: ButtonProps) => {
+
     const {
         connectors: {connect},
     } = useNode((node) => ({
         selected: node.events.selected,
     }));
 
+    const iconObject=icon ? getIcon(icon): getIcon('button');
     return (
         <StyledButton
             ref={(dom) => {
@@ -74,6 +74,7 @@ export const Button = ({
             $margin={margin}
             $variant={variant}
         >
+            <FontAwesomeIcon icon={iconObject} />
             <Text {...textComponent} text={text} color={color}/>
         </StyledButton>
     );
@@ -82,8 +83,9 @@ export const Button = ({
 Button.craft = {
     displayName: 'Button',
     props: {
+        icon: 'button',
         background: {r: 255, g: 255, b: 255, a: 0.5},
-        color: {r: 92, g: 90, b: 90, a: 1},
+        color: 'primary',
         buttonStyle: 'full',
         text: 'Button',
         margin: ['5', '0', '5', '0'],

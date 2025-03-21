@@ -247,6 +247,14 @@ function renderIsRow(element:any){
     )
 }
 
+function renderIconProp(element:any){
+    return ( element.craft.props.icon &&
+        <ToolbarSection title="Icon" props={['icon']}>
+          <ToolbarItem propKey="icon" type="icon" />
+        </ToolbarSection>
+    )
+}
+
 
 
 function renderColorsProp(element){
@@ -334,12 +342,29 @@ function renderHWProps(element){
     </ToolbarSection>
 }
 
+function renderTitleProp(element) {
+    let propData = element.craft.props
+    return         (propData.title || propData.subtitle) && 
+    
+    (<ToolbarSection title="Title" props={['title','subtitle']} summary={({title, subtitle}: any) => {
+            return `${title || ''} ${subtitle ? '/ ' + subtitle : ''}`;}}>
+
+        { propData.title && (<ToolbarItem propKey="title"  type="text" label="Title"/>)}
+
+        {propData.subtitle && (<ToolbarItem propKey="subtitle"  type="text" label="Subtitle"/>)}
+
+    </ToolbarSection>)
+
+}
+
 export function renderSettings(element: any = Button) {
     console.log('element ',element.craft.displayName);
     return (
         <div>
             {element.craft.displayName ==='Checkbox' && renderChecked(element)}
             {renderLabelProp(element)}
+            {renderTitleProp(element)}
+            {renderIconProp(element)}
             {isControl(element.craft.displayName) && renderButtonVariantProp(element)}
             {isContainer(element.craft.displayName) && renderContainerVariantProp(element)}
             {isContainer(element.craft.displayName) && renderOrientation(element)}
