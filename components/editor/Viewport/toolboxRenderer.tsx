@@ -1,10 +1,9 @@
-import { Element, useEditor } from '@craftjs/core';
+import { Element } from '@craftjs/core';
 import { Tooltip } from '@mui/material';
 import React from 'react';
-import { styled } from 'styled-components';
 import { Button } from '../../selectors/Button';
-import { Container } from '../../selectors/Container';
-import { Text } from '../../selectors/Text';
+import { Container, Rating, Slider, Switch, ToggleButtonGroup, TransferList, Card } from '../../selectors';
+import { Text } from '../../selectors';
 import { Video } from '../../selectors/Video';
 import { GroupButton } from '../../selectors/GroupButton';
 import { Item } from './Toolbox';
@@ -15,6 +14,10 @@ import YoutubeSvg from '../../../public/icons/toolbox/video-line.svg';
 import { Toolbox } from './Toolbox';
 import { Checkbox } from '../../selectors/Checkbox';
 import { Select } from 'components/selectors/Select';
+// Add import
+import { GroupRadio } from '../../selectors/GroupRadio';
+import { getIcon } from 'utils/iconUtils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const styles={
  'GroupButton':{
@@ -33,24 +36,47 @@ const styles={
 
 
 
+// Update the icons object
+const icons = {
+  "Text": "Type",
+  "Button": "faStop",
+  "Checkbox": "faSquareCheck",
+  "Select": "faCircle",
+  "GroupRadio": "faCircleDot",
+  "Rating": "faStar",
+  "Container": "faSquare",
+  "ToggleButtonGroup": "faSquare",
+  "Slider": "faSliders", 
+  "Switch": "faToggleOn" ,
+  "TransferList": "faListUl", 
+  "Card": "faSquare" // Add this line
+};
 
-function controlToolRenderer(title:string,element:any, create:any){
-  console.log('controlToolRenderer',element.name)
-  const elem = element===Text? <Text fontSize="12" textAlign="left" text="Hi there" /> :
-               element===Button? <Button text="Button" /> : 
-               element===Checkbox? <Checkbox text="Checkbox" /> : 
-               element===Select? <Select text="Select" /> :
-               element
+// Update the controlToolRenderer function
+function controlToolRenderer(title:string, element:any, create:any) {
+  const elem = element === Text ? <Text fontSize="12" textAlign="left" text="Hi there" /> :
+               element === Button ? <Button text="Button" /> :
+               element === Checkbox ? <Checkbox label="Checkbox" /> :
+               element === Select ? <Select label="Select" /> :
+               element === GroupRadio ? <GroupRadio label="Radio Group" /> : 
+               element === Rating ? <Rating /> : 
+               element === ToggleButtonGroup ? <ToggleButtonGroup /> :
+               element === Slider ? <Slider /> :
+               element === Switch ? <Switch /> :
+               element === TransferList ? <TransferList /> :
+               element === Card ? <Card /> : // Add this line
+               element;
+  
+  const iconObject=  getIcon(icons[element.craft.displayName])
   return(
-    <div
+    <div 
           ref={(ref) => {
             create(ref, elem);
           }}
-          style={styles[elem.name]}>
-
+          style={styles[element.craft.displayName]}>
           <Tooltip title={title} placement="right">
-            <Item $move>
-              <ButtonSvg viewBox="-4 -3 24 24" />
+            <Item $move>              
+              <FontAwesomeIcon icon={iconObject} style={{ fontSize: '8px',stroke: 'currentColor', strokeWidth: 1  }}/>
             </Item>
           </Tooltip>
         </div>
@@ -59,7 +85,9 @@ function controlToolRenderer(title:string,element:any, create:any){
 }
 
 function containerToolRenderer(title:string,element:any, create:any){
-       return(<div
+  const iconObject=  getIcon(icons[element.craft.displayName])
+
+  return(<div
         ref={(ref) => {
           create(
             ref,
@@ -81,7 +109,7 @@ function containerToolRenderer(title:string,element:any, create:any){
       >
         <Tooltip title={title} placement="right">
           <Item $move>
-            <SquareSvg viewBox="-3 -3 24 24" />
+          <FontAwesomeIcon icon={iconObject}  style={{ fontSize: '8px', stroke: 'currentColor', strokeWidth: 1  }} />
           </Item>
         </Tooltip>
       </div>) 
@@ -89,12 +117,9 @@ function containerToolRenderer(title:string,element:any, create:any){
 }
 export function toolboxRenderer(title: string,element: any, create:any) {
     return(
-      element===Container || element===GroupButton ? containerToolRenderer(title,element,create)
+      element===Container || element===GroupButton || element === Card ? containerToolRenderer(title,element,create)
       :controlToolRenderer(title,element,create)
     )
-    
-    
-    
-        
+
     
 }

@@ -1,10 +1,10 @@
 import { Editor, Frame, Element } from '@craftjs/core';
-import { createTheme, ThemeProvider } from '@mui/material';
+import { createTheme,ThemeProvider } from '@mui/material';
 import { NextSeo } from 'next-seo';
 import React from 'react';
 
 import { Viewport, RenderNode } from '../components/editor';
-import { Container, Text , GroupButton} from '../components/selectors';
+import { Container, Text , GroupButton, ToggleButtonGroup, Slider, Switch, TransferList, Card} from '../components/selectors';
 import { Button } from '../components/selectors/Button';
 import { Custom1, OnlyButtons } from '../components/selectors/Custom1';
 import { Custom2, Custom2VideoDrop } from '../components/selectors/Custom2';
@@ -12,6 +12,8 @@ import { Custom3, Custom3BtnDrop } from '../components/selectors/Custom3';
 import { Video } from '../components/selectors/Video';
 import { Checkbox } from '../components/selectors/Checkbox';
 import { Select } from 'components/selectors/Select';
+import { GroupRadio } from 'components/selectors/GroupRadio';
+import {Rating} from 'components/selectors'
 
 
 const theme = createTheme({
@@ -54,6 +56,13 @@ function App() {
             Checkbox,
             Select,
             Video,
+            GroupRadio,
+            Rating,
+            ToggleButtonGroup,
+            Slider,
+            Switch,
+            TransferList,
+            Card
           }}
           enabled={false}
           onRender={RenderNode}

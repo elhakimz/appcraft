@@ -1,8 +1,7 @@
 import { UserComponent, useNode } from '@craftjs/core';
 import { Checkbox as MuiCheckbox, FormControlLabel } from '@mui/material';
 import React from 'react';
-
-import { CheckboxSettings } from './CheckboxSettings.tsx';
+import { CheckboxSettings } from './CheckboxSettings';
 
 type CheckboxProps = {
   checked?: boolean;
@@ -13,7 +12,7 @@ type CheckboxProps = {
   margin?: any[];
 };
 
-export const Checkbox: UserComponent<CheckboxProps> = ({
+export const Checkbox= ({
   checked,
   color,
   disabled,
@@ -29,7 +28,9 @@ export const Checkbox: UserComponent<CheckboxProps> = ({
 
   return (
     <div
-      ref={(dom) => connect(dom)}
+        ref={(dom) => {
+          connect(dom);
+        }}
       style={{
         margin: `${margin[0]}px ${margin[1]}px ${margin[2]}px ${margin[3]}px`,
       }}

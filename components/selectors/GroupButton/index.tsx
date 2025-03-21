@@ -45,7 +45,8 @@ const defaultProps = {
 };
 
 
-export const GroupButton = (props: Partial<GroupButtonProps>) => {
+
+export  const GroupButton = (props: Partial<GroupButtonProps>) => {
   props = {
     ...defaultProps,
     ...props,
@@ -62,11 +63,13 @@ export const GroupButton = (props: Partial<GroupButtonProps>) => {
     shadow,
     radius,
     children,
-    variant,
-    orientation,
+    variant="contained" ,
+    orientation="horizontal",
     height,
     width
   } = props;
+
+  // @ts-ignore
   return (
     <Resizer
       propKey={{ width: 'width', height: 'height' }}
@@ -86,8 +89,8 @@ export const GroupButton = (props: Partial<GroupButtonProps>) => {
         flex: fillSpace === 'yes' ? 1 : 'unset',
         height:'40px', width:'100%'
       }}
-    > 
-    <ButtonGroup variant={variant} orientation={orientation} style={{height:'auto', width:'auto'}}>
+    >
+    <ButtonGroup style={{width:width , height:height}} variant={variant} orientation={orientation} >
         {children}
       </ButtonGroup>
     </Resizer>
@@ -95,7 +98,7 @@ export const GroupButton = (props: Partial<GroupButtonProps>) => {
 };
 
 GroupButton.craft = {
-  displayName: 'Group Button',
+  displayName: 'GroupButton',
   props: defaultProps,
   rules: {
     canDrag: () => true,

@@ -66,6 +66,8 @@ interface Alignment {
 
 
 export  interface Data {
+    name: string
+    label: string
     alignment: Alignment | null
     background: Color;
     buttonStyle: ButtonStyle;
@@ -78,6 +80,8 @@ export  interface Data {
     onClick: EventData | null;
     padding: [number,number,number,number];
     type: 'control' | 'container';
+    checked: boolean | null;
+    options: object[] | null;
     typography: Typography | null;
     variant: string | null;
     orientation: string | null;

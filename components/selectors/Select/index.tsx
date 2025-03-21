@@ -1,4 +1,4 @@
-import { UserComponent, useNode } from '@craftjs/core';
+import { useNode } from '@craftjs/core';
 import { Select as MuiSelect, MenuItem, FormControl, InputLabel } from '@mui/material';
 import React from 'react';
 
@@ -16,7 +16,7 @@ type SelectProps = {
   margin?: any[];
 };
 
-export const Select: UserComponent<SelectProps> = ({
+export const Select = ({
   label,
   value,
   options,
@@ -37,12 +37,14 @@ export const Select: UserComponent<SelectProps> = ({
 
   return (
     <div
-      ref={(dom) => connect(dom)}
-      style={{
+        ref={(dom) => {
+          connect(dom);
+        }}
+        style={{
         margin: `${margin[0]}px ${margin[1]}px ${margin[2]}px ${margin[3]}px`,
       }}
     >
-      <FormControl fullWidth={fullWidth} size={size} disabled={disabled}>
+      <FormControl fullWidth={fullWidth} size={size} disabled={disabled} style={{width:'auto', minWidth:'200px'}}>
         <InputLabel>{label}</InputLabel>
         <MuiSelect
           value={selectedValue}

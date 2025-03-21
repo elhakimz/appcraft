@@ -43,7 +43,7 @@ const StyledButton = styled.button<StyledButtonProps>`
     variant: $variant;
 `;
 
-export const Button: UserComponent<ButtonProps> = ({
+export const Button = ({
                                                        text,
                                                        textComponent,
                                                        color,
@@ -92,6 +92,8 @@ Button.craft = {
             ...Text.craft.props,
             textAlign: 'center',
         },
+        onClick:"{}"
+
     },
     related: {
         toolbar: ButtonSettings,

@@ -6,7 +6,6 @@ import { styled } from 'styled-components';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
-import Typography from '@mui/material/Typography';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
@@ -22,6 +21,9 @@ import { GroupButton } from '../../selectors/GroupButton';
 import { toolboxRenderer } from './toolboxRenderer';
 import { Checkbox } from '../../selectors/Checkbox';
 import { Select } from 'components/selectors/Select';
+import { GroupRadio } from 'components/selectors/GroupRadio';
+import { Card, Rating, Slider, Switch, ToggleButtonGroup, TransferList } from 'components/selectors';
+import { GroupButtonSettings } from 'components/selectors/GroupButton/GroupButtonSettings';
 
 const ToolboxDiv = styled.div<{ $enabled: boolean }>`
   transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1);
@@ -198,7 +200,20 @@ export const Toolbox = () => {
         {toolboxRenderer('Checkbox', Checkbox, create)}
         {toolboxRenderer('Select', Select, create)}
         {toolboxRenderer('Container', Container, create)}
+        {toolboxRenderer('Card', Card, create)}
         {toolboxRenderer('Group Button', GroupButton, create)}
+        {toolboxRenderer('Group Radio', GroupRadio, create)}
+        {toolboxRenderer('Rating', Rating, create)}
+        {toolboxRenderer('Toggle Buttons', ToggleButtonGroup, create)}
+        {toolboxRenderer('Slider', Slider, create)}
+        {toolboxRenderer('Switch', Switch, create)}
+        {toolboxRenderer('Transfer List', TransferList, create)}
+        
+        
+        
+        
+        
+        
         
       </div>
           

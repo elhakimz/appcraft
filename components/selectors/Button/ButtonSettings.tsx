@@ -3,8 +3,8 @@ import React from 'react';
 import { ToolbarSection, ToolbarItem } from '../../editor';
 import { ToolbarRadio } from '../../editor/Toolbar/ToolbarRadio';
 
-import {data} from './settings'
 import {renderSettings} from "../../../utils/propertyRendererUtil";
+import { Button } from '.';
 
 export const ButtonSettings = () => {
   return (
@@ -63,7 +63,7 @@ export const ButtonSettings = () => {
       {/*    <ToolbarRadio value="outline" label="Outline" />*/}
       {/*  </ToolbarItem>*/}
       {/*</ToolbarSection>*/}
-        {renderSettings(data) }
+        {renderSettings(Button)}
     </React.Fragment>
   );
 };

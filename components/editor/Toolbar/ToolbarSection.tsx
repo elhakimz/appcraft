@@ -39,8 +39,11 @@ export const ToolbarSection = ({ title, props, summary, children }: any) => {
       <AccordionSummary
         sx={{
           minHeight: '36px',
+          maxHeight: '36px',
           padding: 0,
           outline: 'none!important',
+          backgroundColor: '#efefef',
+          borderBottom: '1px solid #ddd',
         }}
       >
         <div className="px-6 w-full">

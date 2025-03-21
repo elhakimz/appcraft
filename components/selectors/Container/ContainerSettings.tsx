@@ -1,9 +1,7 @@
 import React from 'react';
 
-import { ToolbarSection, ToolbarItem } from '../../editor';
-import { ToolbarRadio } from '../../editor/Toolbar/ToolbarRadio';
 import {renderSettings} from "../../../utils/propertyRendererUtil";
-import {data} from './settings'
+import { Container } from '.';
 
 export const ContainerSettings = () => {
   return (
@@ -89,7 +87,7 @@ export const ContainerSettings = () => {
       {/*    <ToolbarRadio value="flex-end" label="Flex end" />*/}
       {/*  </ToolbarItem>*/}
       {/*</ToolbarSection>*/}
-        {renderSettings(data)}
+        {renderSettings(Container)}
     </React.Fragment>
   );
 };

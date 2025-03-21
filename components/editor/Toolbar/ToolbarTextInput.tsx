@@ -9,6 +9,7 @@ export type ToolbarTextInputProps = {
   type: string;
   onChange?: (value: any) => void;
   value?: any;
+  multiline?:false| boolean;
 };
 export const ToolbarTextInput = ({
   onChange,
@@ -16,6 +17,7 @@ export const ToolbarTextInput = ({
   prefix,
   label,
   type,
+  multiline,
   ...props
 }: ToolbarTextInputProps) => {
   const [internalValue, setInternalValue] = useState(value);
@@ -62,8 +64,13 @@ export const ToolbarTextInput = ({
       ) : null}
       <TextField
         label={label}
-        style={{ margin: 0, width: '100%' }}
+        style={{
+          margin: 0,
+          width: '100%'
+
+        }}
         value={internalValue || ''}
+        {...(multiline ? { multiline: true } : {})}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             onChange((e.target as any).value);
@@ -78,17 +85,18 @@ export const ToolbarTextInput = ({
           padding: 0,
           width: '100%',
           background: 'transparent',
-          borderRadius: '100px',
+          borderRadius: '10px',
           border: 'none',
           margin: 0,
           marginTop: 7,
           position: 'relative',
+          ...(multiline ? { height: '240px' } : {}),
           '.MuiInputBase-input': {
             background: '#e5e5e5',
-            borderRadius: '100px',
+            borderRadius: '10px',
             fontSize: '0.9rem',
             position: 'relative',
-            paddingLeft: '28px',
+            paddingLeft: '8px',
           },
         }}
         InputProps={{

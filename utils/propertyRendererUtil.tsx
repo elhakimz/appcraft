@@ -4,18 +4,28 @@ import React from 'react';
 import {ToolbarSection, ToolbarItem, ToolbarTextInput} from '../components/editor';
 import { ToolbarRadio } from '../components/editor/Toolbar/ToolbarRadio';
 import { Data } from '../types/elementData';
+import {ToolbarCheckbox} from "../components/editor/Toolbar/ToolbarCheckbox";
+import {ToolbarOptionsDialog} from "../components/editor/Toolbar/ToolbarOptionsDialog";
+import {Button} from "../components/selectors/Button";
+import { GroupRadio } from 'components/selectors/GroupRadio';
+import { Group } from 'next/dist/shared/lib/router/utils/route-regex';
+import { ToolbarSelectItem } from 'components/editor/Toolbar/ToolbarSelectItem';
+import MenuItem from '@mui/material/MenuItem';
 
-function renderProps(data: Data) {
-    return (
-        <div>
-            <ToolbarTextInput propKey="text" label="Text" />
-        </div>
-    );
+function isControl(name){
+    return ['Button', 'Checkbox', 'Select'].includes(name)
 }
 
-function renderColorProp(propData: Data) {
+function isContainer(name){
+    return['Container','GroupButton'].includes(name)
+}
+
+function renderColorProp(element) {
+    let validProps = 'color' in element.craft.props
+        && 'background' in element.craft.props;
+
     return(
-        propData.color && (<ToolbarSection
+        validProps && (<ToolbarSection
             title="Colors"
             props={['background', 'color']}
             summary={(data) => (
@@ -41,21 +51,29 @@ function renderColorProp(propData: Data) {
 
 }
 
-function renderEventsProp(propData: Data) {
+function renderEventsProp(element) {
+    let propData = element.craft.props
     return         (propData.onClick || propData.onChange) && (<ToolbarSection title="Events">
 
-        { propData.onClick && (<ToolbarTextInput type={"text"}  label="onClick" value={propData.onClick.value}
-                                                 onChange={(value) => {propData.onClick.value = value}}/>)}
+        { propData.onClick && (<ToolbarTextInput type="text" multiline={true} label="onClick" value={propData.onClick}
+                                                 onChange={(value) => {propData.onClick = value}}/>)}
 
-        {propData.onChange && (<ToolbarTextInput type={"text"} label="onChange" value={propData.onChange.value}
-                                             onChange={(value) => {propData.onChange.value = value}}/>)}
+        {propData.onChange && (<ToolbarTextInput type="text" multiline={true} label="onChange" value={propData.onChange}
+                                             onChange={(value) => {propData.onChange = value}}/>)}
 
     </ToolbarSection>)
 
 }
 
-function renderMarginProp(propData: Data) {
-    return propData.margin &&(
+function renderLabelProp(element: any ) {
+    return  element.craft.props.label && (<ToolbarSection title="Label" props={['label']} label={element.craft.props.label}>
+        <ToolbarItem full={true} propKey="label" type="text" label="Label" />
+    </ToolbarSection>)
+}
+
+
+function renderMarginProp(element:any) {
+    return element.craft.props.margin &&(
         <ToolbarSection
             title="Margin"
             props={['margin']}
@@ -63,19 +81,17 @@ function renderMarginProp(propData: Data) {
                 return `${margin[0] || 0}px ${margin[1] || 0}px ${margin[2] || 0}px ${
                     margin[3] || 0
                 }px`;
-            }}
-        >
+            }}>
             <ToolbarItem propKey="margin" index={0} type="slider" label="Top" />
             <ToolbarItem propKey="margin" index={1} type="slider" label="Right" />
             <ToolbarItem propKey="margin" index={2} type="slider" label="Bottom" />
             <ToolbarItem propKey="margin" index={3} type="slider" label="Left" />
         </ToolbarSection>
-
     );
 }
 
-function renderPaddingProp(propData: Data) {
-    return( propData.padding &&
+function renderPaddingProp(element:any) {
+    return( element.craft.props.padding &&
         (<ToolbarSection
             title="Padding"
             props={['padding']}
@@ -93,9 +109,9 @@ function renderPaddingProp(propData: Data) {
     )
 }
 
-export function renderContainerDecoration(propData:Data){
+export function renderContainerDecoration(element){
     return (
-        propData.decoration && (<ToolbarSection title="Decoration" props={['radius', 'shadow']}>
+        element.craft.props.decoration && (<ToolbarSection title="Decoration" props={['radius', 'shadow']}>
             <ToolbarItem
                 full={true}
                 propKey="radius"
@@ -113,9 +129,9 @@ export function renderContainerDecoration(propData:Data){
 }
 
 
-function renderAlignmentProp(propData:Data){
+function renderAlignmentProp(element){
 
-    return propData.alignment &&(<ToolbarSection title="Alignment">
+    return element.craft.props.alignment &&(<ToolbarSection title="Alignment">
         <ToolbarItem
             propKey="flexDirection"
             type="radio"
@@ -145,9 +161,9 @@ function renderAlignmentProp(propData:Data){
     </ToolbarSection>)
 }
 
-export function  renderButtonVariantProp(propData:Data){
-    return propData.variant && (<ToolbarSection title="Variant">
-        <ToolbarItem propKey="variant" type="radio" label="Variant">
+export function  renderButtonVariantProp(element:any){
+    return element.craft.props.variant && (<ToolbarSection title="Variant" props={['variant']}>
+        <ToolbarItem propKey="variant" type="radio" label="Variant" >
             <ToolbarRadio value="text" label="Text" />
             <ToolbarRadio value="container" label="Container" />
             <ToolbarRadio value="outlined" label="Outlined" />
@@ -155,8 +171,34 @@ export function  renderButtonVariantProp(propData:Data){
     </ToolbarSection>)
 }
 
-export function  renderContainerVariantProp(propData:Data){
-    return propData.variant && (<ToolbarSection title="Variant">
+export function  renderColorThemeProp(element:any){
+    return (element.craft.props.color && typeof element.craft.props.color==="string") &&
+        (<ToolbarSection title="Color" props={['color']}>
+        <ToolbarItem propKey="color" type="radio" label="Color" >
+            <ToolbarRadio value="primary" label="Primary" />
+            <ToolbarRadio value="secondary" label="Secondary" />
+            <ToolbarRadio value="error" label="Error" />
+            <ToolbarRadio value="success" label="Success" />
+            <ToolbarRadio value="warning" label="Warning" />
+        </ToolbarItem>
+    </ToolbarSection>)
+}
+
+export function renderSizeThemeProp(element: any) {
+    return (element.craft.props.size && typeof element.craft.props.size === "string") && (
+      <ToolbarSection title="Size" props={['size']}>
+        <ToolbarItem propKey="size" type="select" label="size">
+           <MenuItem key={0} value={"small"}> {"Small"} </MenuItem>
+           <MenuItem key={0} value={"medium"}> {"Medium"} </MenuItem>
+           <MenuItem key={0} value={"large"}> {"Large"} </MenuItem>
+        </ToolbarItem>
+      </ToolbarSection>
+    );
+  }
+
+
+export function  renderContainerVariantProp(element:any){
+    return element.craft.props.variant && (<ToolbarSection title="Variant">
         <ToolbarItem propKey="variant" type="radio" label="Variant">
             <ToolbarRadio value="text" label="Text" />
             <ToolbarRadio value="contained" label="Container" />
@@ -165,8 +207,8 @@ export function  renderContainerVariantProp(propData:Data){
     </ToolbarSection>)
 }
 
-export function renderButtonDecoration(propData:Data){
-    return propData.decoration && (
+export function renderButtonDecoration(element){
+    return element.craft.props.decoration && (
         <ToolbarSection title="Decoration">
             <ToolbarItem propKey="buttonStyle" type="radio" label="Style">
                 <ToolbarRadio value="full" label="Full" />
@@ -176,9 +218,9 @@ export function renderButtonDecoration(propData:Data){
     )
 }
 
-
-export function renderOrientation(propData:Data){
-    return propData.orientation && (
+export function renderOrientation(element:any){
+    console.log("element props",element.craft.props)
+    return element.craft.props.orientation && (
         <ToolbarSection title="Orientation">
             <ToolbarItem propKey="orientation" type="radio" label="Orientation">
                 <ToolbarRadio value="horizontal" label="Horizontal" />
@@ -187,12 +229,29 @@ export function renderOrientation(propData:Data){
         </ToolbarSection>
     )
 }
+function renderChecked(element:any){
+    return ( element.craft.props['checked'] &&
+        <ToolbarSection title="Checked">
+            <ToolbarItem propKey="checked" type="checkbox" label="Checked">
+                <ToolbarCheckbox value="checked" label="Checked" />
+            </ToolbarItem>
+        </ToolbarSection>
+    )
+}
 
-export function renderColorsProp(propData:Data){
-    const bg=propData.background;
-    const color=propData.color;   
-    
-    return propData.colors && (<ToolbarSection
+function renderIsRow(element:any){
+    return ( element.craft.props['row'] &&
+        <ToolbarSection title="Row" props={['row']}>
+          <ToolbarItem propKey="row" type="checkbox" label="Row"/>
+        </ToolbarSection>
+    )
+}
+
+
+
+function renderColorsProp(element){
+
+    return element.craft.props.colors && (<ToolbarSection
         title="Colors"
         props={['background', 'color']}
         summary={({ bg, color }: any) => {
@@ -218,31 +277,85 @@ export function renderColorsProp(propData:Data){
             );
         }}
     >
-        <ToolbarItem
-            full={true}
-            propKey="background"
-            type="bg"
-            label="Background"
-        />
+        <ToolbarItem full={true}propKey="background" type="bg" label="Background"   />
         <ToolbarItem full={true} propKey="color" type="color" label="Text" />
     </ToolbarSection>)
 }
 
-export function renderSettings(data: Data) {
+function renderOptionsProp(element) {
+    const options = element.craft.props.options;
+    const value = element.craft.props.value;
+  
+    return (
+      options && (
+        <ToolbarSection
+          title="Value"
+          props={['value']}
+          summary={({ value }: any) => {
+            return `${value}`;
+          }}
+        >
+          <ToolbarItem
+            propKey="value"
+            type="select"
+            label="Value"
+            optionsData={options}
+            hasOptions={true}
+          >
+
+          </ToolbarItem>
+          
+          <ToolbarOptionsDialog
+                label="Options"
+                propKey="options"
+                optionsData={options}
+                onChange={(newOptions) => {
+                    console.log('Options changed:', newOptions);
+                } } 
+                value={value}                
+            />        
+        </ToolbarSection>
+      )
+    );
+  }
+function renderHWProps(element){
+    let propHeight=element.craft.props.height
+    let propWidth=element.craft.props.width
+    return (propHeight || propWidth) && <ToolbarSection
+        title="Height & Width"
+        props={['height','width']}
+        summary={({height, width}: any) => {
+            return `${height}  ${width}`;
+        }}
+    >
+        <ToolbarItem propKey="height"  type="text" label="Height"/>
+        <ToolbarItem propKey="width"  type="text" label="Width"/>
+
+    </ToolbarSection>
+}
+
+export function renderSettings(element: any = Button) {
+    console.log('element ',element.craft.displayName);
     return (
         <div>
-
-            {data.type === 'control' && renderButtonVariantProp(data)}
-            {data.type === 'container' && renderContainerVariantProp(data)}
-            {data.type === 'container' && renderOrientation(data)}
-            {renderColorProp(data)}
-            {renderColorsProp(data)}
-            {renderMarginProp(data)}
-            {renderPaddingProp(data)}
-            {renderAlignmentProp(data)}
-            {data.type === 'control' && renderButtonDecoration(data)}
-            {data.type === 'container' && renderContainerDecoration(data)}
-            {renderEventsProp(data)}
+            {element.craft.displayName ==='Checkbox' && renderChecked(element)}
+            {renderLabelProp(element)}
+            {isControl(element.craft.displayName) && renderButtonVariantProp(element)}
+            {isContainer(element.craft.displayName) && renderContainerVariantProp(element)}
+            {isContainer(element.craft.displayName) && renderOrientation(element)}
+            {renderColorProp(element)}
+            {renderColorsProp(element)}
+            {renderColorThemeProp(element)}
+            {renderMarginProp(element)}
+            {renderPaddingProp(element)}
+            {renderAlignmentProp(element)}
+            {renderSizeThemeProp(element)}
+            {renderHWProps(element)}
+            {renderIsRow(element)}
+            {isControl(element.craft.displayName) && renderButtonDecoration(element)}
+            {isContainer(element.craft.displayName) && renderContainerDecoration(element)}
+            {renderEventsProp(element)}
+            {renderOptionsProp(element)}
         </div>
     );
 }

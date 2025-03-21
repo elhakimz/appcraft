@@ -1,14 +1,13 @@
 import React from 'react';
 
-import { ToolbarSection, ToolbarItem } from '../../editor';
-import { ToolbarRadio } from '../../editor/Toolbar/ToolbarRadio';
 import {renderSettings} from "../../../utils/propertyRendererUtil";
 import {data} from './settings'
+import {GroupButton} from "./index";
 
 export const GroupButtonSettings = () => {
   return (
     <React.Fragment>
-        {renderSettings(data)}
+        {renderSettings(GroupButton)}
     </React.Fragment>
   );
 };
