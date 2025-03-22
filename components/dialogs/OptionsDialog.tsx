@@ -36,32 +36,32 @@ const OptionsDialog = ({ open, onClose, onSave, options }) => {
                 </div>
                 <List style={{ width: '100%' }}>
                     <ListItem>
-                        <ListItemText 
-                            primary="Value" 
-                            style={{ flex: 1, fontWeight: 'bold' }} 
+                        <ListItemText
+                            primary="Value"
+                            style={{ flex: 1, fontWeight: 'bold' }}
                         />
-                        <ListItemText 
-                            primary="Label" 
-                            style={{ flex: 1, fontWeight: 'bold' }} 
+                        <ListItemText
+                            primary="Label"
+                            style={{ flex: 1, fontWeight: 'bold' }}
                         />
                         <div style={{ width: 48 }} />
                     </ListItem>
                     {optionsList.map((option, index) => (
-                        <ListItem 
-                            key={index} 
-                            sx={{ 
+                        <ListItem
+                            key={index}
+                            sx={{
                                 display: 'flex',
                                 '&:hover': {
                                     bgcolor: 'action.hover'
                                 }
                             }}
                         >
-                            <ListItemText 
-                                primary={option.value} 
+                            <ListItemText
+                                primary={option.value}
                                 style={{ flex: 1 }}
                             />
-                            <ListItemText 
-                                primary={option.label} 
+                            <ListItemText
+                                primary={option.label}
                                 style={{ flex: 1 }}
                             />
                             <IconButton onClick={() => handleRemoveOption(index)}>
