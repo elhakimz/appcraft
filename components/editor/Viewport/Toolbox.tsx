@@ -22,7 +22,7 @@ import { toolboxRenderer } from './toolboxRenderer';
 import { Checkbox } from '../../selectors/Checkbox';
 import { Select } from 'components/selectors/Select';
 import { GroupRadio } from 'components/selectors/GroupRadio';
-import { Card, Rating, Slider, Switch, ToggleButtonGroup, TransferList } from 'components/selectors';
+import { Avatar, Card, Rating, Slider, Switch, ToggleButtonGroup, TransferList } from 'components/selectors';
 import { GroupButtonSettings } from 'components/selectors/GroupButton/GroupButtonSettings';
 
 const ToolboxDiv = styled.div<{ $enabled: boolean }>`
@@ -208,20 +208,11 @@ export const Toolbox = () => {
         {toolboxRenderer('Slider', Slider, create)}
         {toolboxRenderer('Switch', Switch, create)}
         {toolboxRenderer('Transfer List', TransferList, create)}
-        
-        
-        
-        
-        
-        
-        
       </div>
           
         
        </AccordionDetails>
       </Accordion>
-
-
       <Accordion sx={{ margin: 0,padding: 0, '&:before': {
               display: 'none', // Remove the default divider line
             },
@@ -239,8 +230,9 @@ export const Toolbox = () => {
           > Inputs
           </AccordionSummary>
           <AccordionDetails>
-          <div>
-
+          <div className=" grid grid-cols-2">
+           {toolboxRenderer('Avatar', Avatar, create)}
+        
           </div>  
           </AccordionDetails>
         </Accordion>

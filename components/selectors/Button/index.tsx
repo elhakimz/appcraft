@@ -10,8 +10,10 @@ import { getIcon } from 'utils/iconUtils';
 import { get } from 'http';
 import { Icon } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {Button as MuiButton} from '@mui/material';
 
 type ButtonProps = {
+    id?: string;
     icon?: string;
     background?: Record<'r' | 'g' | 'b' | 'a', number>;
     color?: string;
@@ -20,35 +22,22 @@ type ButtonProps = {
     margin?: any[];
     text?: string;
     textComponent?: any;
+    size?: string;
     onClick?: string;
 };
 
-// N.B: Alias required StyledComponent props for Transient Props; https://styled-components.com/docs/api#transient-props
-type StyledButtonProps = {
-    $background?: Record<'r' | 'g' | 'b' | 'a', number>;
-    $buttonStyle?: string;
-    $margin?: any[];
-    $variant?: string;
-};
 
-
-const StyledButton = styled.button<StyledButtonProps>`
-    
-    margin: ${({$margin}) =>
-            `${$margin[0]}px ${$margin[1]}px ${$margin[2]}px ${$margin[3]}px`};
-    
-    variant: $variant;
-`;
-
-export const Button = ({
-                            text,
-                            textComponent,
-                            color,
-                            buttonStyle,
-                            background,
-                            margin,
-                            variant,
-                            icon
+export const Button = ({id,
+                        text,
+                        textComponent,
+                        color='primary',
+                        buttonStyle,
+                        background,
+                        margin,
+                        variant,
+                        icon,
+                        onClick,
+                        size,
                         }: ButtonProps) => {
 
     const {
@@ -58,31 +47,39 @@ export const Button = ({
     }));
 
     const iconObject=icon ? getIcon(icon): getIcon('button');
+    const faIcon = iconObject? <FontAwesomeIcon icon={iconObject} /> : null;
+    const sColor = color || 'primary'
     return (
-        <StyledButton
-            ref={(dom) => {
-                connect(dom);
-            }}
-            className={cx([
-                'rounded w-full px-4 py-2',
-                {
-                    'shadow-lg': buttonStyle === 'full',
-                },
-            ])}
-            $buttonStyle={buttonStyle}
-            $background={background}
-            $margin={margin}
-            $variant={variant}
+        <div
+            ref={(dom) => connect(dom)}
+            style={{
+             margin: `${margin[0]}px ${margin[1]}px ${margin[2]}px ${margin[3]}px`,
+             backgroundColor: `rgba(${background?.r}, ${background?.g}, ${background?.b}, ${background?.a})`,
+          }}
         >
-            <FontAwesomeIcon icon={iconObject} />
-            <Text {...textComponent} text={text} color={color}/>
-        </StyledButton>
+        <MuiButton id={id} variant={variant} startIcon={faIcon}
+          onClick={() => {
+            try {
+              if (onClick) {
+                // Directly evaluate the string as a function
+                new Function(onClick)();
+              }
+            } catch (error) {
+              console.error('Error executing onClick:', error);
+            }
+          }}
+          size={size}
+          >
+          <Text {...textComponent} text={text} color={color} />
+        </MuiButton>
+        </div>
     );
 };
 
 Button.craft = {
     displayName: 'Button',
     props: {
+        id: `button_${Math.random().toString(36).substr(2, 9)}`,
         icon: 'button',
         background: {r: 255, g: 255, b: 255, a: 0.5},
         color: 'primary',
@@ -94,7 +91,8 @@ Button.craft = {
             ...Text.craft.props,
             textAlign: 'center',
         },
-        onClick:"{}"
+        onClick:"alert('Hello World')",
+        size: 'medium',
 
     },
     related: {

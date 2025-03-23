@@ -55,6 +55,7 @@ export const Text = ({
 Text.craft = {
   displayName: 'Text',
   props: {
+    id: `text_${Math.random().toString(36).substr(2, 9)}`,
     fontSize: '15',
     textAlign: 'left',
     fontWeight: '500',

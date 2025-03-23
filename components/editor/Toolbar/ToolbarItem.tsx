@@ -9,6 +9,8 @@ import { ToolbarSelectItem } from './ToolbarSelectItem';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faIcons } from '@fortawesome/free-solid-svg-icons';
 import IconSelectorDialog from 'components/dialogs/IconSelectorDialog';
+import { faCode } from '@fortawesome/free-solid-svg-icons';
+import EditorDialog from 'components/dialogs/EditorDialog';
 
 export type ToolbarItemProps = {
   prefix?: string;
@@ -56,6 +58,9 @@ export const ToolbarItem = ({
   // State for managing the dialog
   const [dialogOpen, setDialogOpen] = React.useState(false);
 
+  // State for managing the current value of the code editor
+  const [currentValue, setCurrentValue] = React.useState(value || '');
+
   // Handle icon selection
   const handleIconSelect = (iconName) => {
     setProp((props) => {
@@ -66,6 +71,19 @@ export const ToolbarItem = ({
       }
     }, 500);
   };
+
+  const handleCodeChange = (code) => {
+    setProp((props) => {
+      if (Array.isArray(propValue)) {
+        props[propKey][index] = code;
+      } else {
+        props[propKey] = code;
+      }
+    }, 500);
+    setDialogOpen(false);
+  };
+
+
 
   return (
     <Grid size={{ xs: full ? 12 : 6 }}>
@@ -241,7 +259,58 @@ export const ToolbarItem = ({
               onSelect={handleIconSelect}
             />
           </>
-        ) : null}
+        ) 
+          : (type==='code-js' || type==='code-ts' || type==='code-json' || type==='code-object')? (
+          <>
+            {props.label ? (
+              <h4 className="text-sm text-light-gray-2">{props.label}</h4>
+            ) : null}
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+              <TextField
+                fullWidth
+                style={{ maxWidth: '400px', minWidth: '200px' }}
+                value={currentValue}
+                multiline
+                rows={3}
+                InputProps={{
+                  readOnly: true,
+                }}
+                size='small'
+              />
+              <IconButton
+                onClick={() => setDialogOpen(true)}
+                sx={{
+                  mt: '4px',
+                  bgcolor: 'action.selected',
+                  '&:hover': { bgcolor: 'action.focus' },
+                }}
+                size='small'
+              >
+                <FontAwesomeIcon icon={faCode} />
+              </IconButton>
+            </div>
+            <EditorDialog
+              open={dialogOpen}
+              onClose={() => setDialogOpen(false)}
+              onSave={(newValue) => {
+                setCurrentValue(newValue);
+                handleCodeChange(newValue)
+                // setCurrentValue(newValue); // Update the local state
+                // setProp((props: any) => {
+                //   if (Array.isArray(propValue)) {
+                //     props[propKey][index] = onChange ? onChange(newValue) : newValue;
+                //   } else {
+                //     props[propKey] = onChange ? onChange(newValue) : newValue;
+                //   }
+                // }, 500);
+                // setDialogOpen(false);
+              }}
+              initialValue={currentValue}
+              language={type === 'code-js' ? 'javascript' : type === 'code-ts' ? 'typescript' : 'json'}
+              title={`Edit ${props.label || 'Code'}`}
+            />
+          </>
+        )  : null}
       </div>
     </Grid>
   );

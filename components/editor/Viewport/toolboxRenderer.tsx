@@ -2,16 +2,10 @@ import { Element } from '@craftjs/core';
 import { Tooltip } from '@mui/material';
 import React from 'react';
 import { Button } from '../../selectors/Button';
-import { Container, Rating, Slider, Switch, ToggleButtonGroup, TransferList, Card } from '../../selectors';
+import { Container, Rating, Slider, Switch, ToggleButtonGroup, TransferList, Card, Avatar } from '../../selectors';
 import { Text } from '../../selectors';
-import { Video } from '../../selectors/Video';
 import { GroupButton } from '../../selectors/GroupButton';
 import { Item } from './Toolbox';
-import ButtonSvg from '../../../public/icons/toolbox/button.svg';
-import SquareSvg from '../../../public/icons/toolbox/rectangle.svg';
-import TypeSvg from '../../../public/icons/toolbox/text.svg';
-import YoutubeSvg from '../../../public/icons/toolbox/video-line.svg';
-import { Toolbox } from './Toolbox';
 import { Checkbox } from '../../selectors/Checkbox';
 import { Select } from 'components/selectors/Select';
 // Add import
@@ -49,7 +43,8 @@ const icons = {
   "Slider": "faSliders", 
   "Switch": "faToggleOn" ,
   "TransferList": "faListAlt", 
-  "Card": "faAddressCard" // Add this line
+  "Card": "faAddressCard", // Add this line
+  "Avatar": "faUser" // Add this line
 };
 
 // Update the controlToolRenderer function
@@ -63,6 +58,9 @@ function controlToolRenderer(title:string, element:any, create:any) {
                element === ToggleButtonGroup ? <ToggleButtonGroup /> :
                element === Slider ? <Slider /> :
                element === Switch ? <Switch /> :
+               element === TransferList ? <TransferList /> :
+               element === Card ? <Card /> :
+               element === Avatar ? <Avatar /> : // Add this line
                element;
   
   const iconObject=  getIcon(icons[element.craft.displayName])

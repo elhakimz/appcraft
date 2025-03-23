@@ -1,412 +1,227 @@
-import { Editor, Frame, Element } from '@craftjs/core';
-import { createTheme,ThemeProvider } from '@mui/material';
 import { NextSeo } from 'next-seo';
-import React from 'react';
+import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+import {
+  Box,
+  Typography,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  IconButton,
+} from '@mui/material';
+import { Project, useProjectStore, createNewProject } from '../store/projectStore';
+import { 
+  Grid,
+  Card,
+  CardContent,
+  CardActions
+} from '@mui/material';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { CircularProgress } from '@mui/material';
 
-import { Viewport, RenderNode } from '../components/editor';
-import { Container, Text , GroupButton, ToggleButtonGroup, Slider, Switch, TransferList, Card} from '../components/selectors';
-import { Button } from '../components/selectors/Button';
-import { Custom1, OnlyButtons } from '../components/selectors/Custom1';
-import { Custom2, Custom2VideoDrop } from '../components/selectors/Custom2';
-import { Custom3, Custom3BtnDrop } from '../components/selectors/Custom3';
-import { Video } from '../components/selectors/Video';
-import { Checkbox } from '../components/selectors/Checkbox';
-import { Select } from 'components/selectors/Select';
-import { GroupRadio } from 'components/selectors/GroupRadio';
-import {Rating} from 'components/selectors'
+const Home = () => {
+  const router = useRouter();
+  const { projects, addProject, updateProject, deleteProject } = useProjectStore();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [projectName, setProjectName] = useState('');
+  const [projectDescription, setProjectDescription] = useState('');
 
+  // Handle opening the dialog for creating/editing a project
+  const handleOpenDialog = (project: Project | null = null) => {
+    if (project) {
+      // Editing an existing project
+      setEditingProject(project);
+      setProjectName(project.name);
+      setProjectDescription(project.description || '');
+    } else {
+      // Creating a new project
+      setEditingProject(null);
+      setProjectName('');
+      setProjectDescription('');
+    }
+    setOpenDialog(true);
+  };
 
-const theme = createTheme({
-  typography: {
-    fontFamily: [
-      'acumin-pro',
-      'Roboto',
-      '"Helvetica Neue"',
-      'Arial',
-      'sans-serif',
-    ].join(','),
-  },
-  palette: {
-    primary: {
-      main: '#3f51b5',
-    },
-    secondary: {
-      main: '#f50057',
-    },
-  },
-});
+  // Handle closing the dialog
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setEditingProject(null);
+    setProjectName('');
+    setProjectDescription('');
+  };
 
-function App() {
+  // Handle saving the project (create or update)
+  const handleSaveProject = () => {
+    if (editingProject) {
+      // Update existing project
+      updateProject(editingProject.id, {
+        ...editingProject,
+        name: projectName,
+        description: projectDescription,
+      });
+    } else {
+      // Create new project with base structure
+      const newProject = createNewProject(projectName, projectDescription);
+      addProject(newProject);
+    }
+    handleCloseDialog();
+  };
+
+  // Handle navigating to a project's details page
+  // Add this state near other state declarations
+  const [loadingProjectId, setLoadingProjectId] = useState<string | null>(null);
+  
+  // Update the handleProjectClick function
+  const handleProjectClick = async (projectId: string) => {
+    setLoadingProjectId(projectId);
+    try {
+      await router.push(`/projects/${projectId}`);
+    } finally {
+      setLoadingProjectId(null);
+    }
+  };
+  
+  
   return (
-    <ThemeProvider theme={theme}>
-      <div className="h-full h-screen">
-        <NextSeo
-          title="Craft.js"
-          description="A React framework for building drag-n-drop page editors."
-          canonical="https://craft.js.org/"
-          twitter={{
-            site: 'craft.js.org',
-            cardType: 'summary_large_image',
-          }}
-        />
-        <Editor
-          resolver={{
-            Container,
-            Text,
-            GroupButton,
-            Custom1,
-            Custom2,
-            Custom2VideoDrop,
-            Custom3,
-            Custom3BtnDrop,
-            OnlyButtons,
-            Button,
-            Checkbox,
-            Select,
-            Video,
-            GroupRadio,
-            Rating,
-            ToggleButtonGroup,
-            Slider,
-            Switch,
-            TransferList,
-            Card
-          }}
-          enabled={false}
-          onRender={RenderNode}
+    <div className="h-full h-screen">
+      <NextSeo
+        title="AppCraft"
+        description="A drag-and-drop page editor for building apps."
+        canonical="https://appcraft.org/"
+        twitter={{
+          site: 'appcraft.org',
+          cardType: 'summary_large_image',
+        }}
+      />
+
+      {/* Project Management UI */}
+      <Box sx={{ padding: '20px' }}>
+        <Typography variant="h4" gutterBottom>
+          AppCraft
+        </Typography>
+
+        {/* Create Project Button */}
+        <Button
+          variant="contained"
+          onClick={() => handleOpenDialog()}
+          sx={{ marginBottom: '20px' }}
         >
-          <Viewport>
-            <Frame>
-              <Element
-                canvas
-                is={Container}
-                width="800px"
-                height="auto"
-                background={{ r: 255, g: 255, b: 255, a: 1 }}
-                padding={['40', '40', '40', '40']}
-                custom={{ displayName: 'App' }}
-              >
-                <Element
-                  canvas
-                  is={Container}
-                  flexDirection="row"
-                  width="100%"
-                  height="auto"
-                  padding={['40', '40', '40', '40']}
-                  margin={['0', '0', '40', '0']}
-                  custom={{ displayName: 'Introduction' }}
-                >
-                  <Element
-                    canvas
-                    is={Container}
-                    width="40%"
-                    height="100%"
-                    padding={['0', '20', '0', '20']}
-                    custom={{ displayName: 'Heading' }}
-                  >
-                    <Text
-                      fontSize="23"
-                      fontWeight="400"
-                      text="Craft.js is a React framework for building powerful &amp; feature-rich drag-n-drop page editors."
-                    ></Text>
-                  </Element>
-                  <Element
-                    canvas
-                    is={Container}
-                    width="60%"
-                    height="100%"
-                    padding={['0', '20', '0', '20']}
-                    custom={{ displayName: 'Description' }}
-                  >
-                    <Text
-                      fontSize="14"
-                      fontWeight="400"
-                      text="Everything you see here, including the editor, itself is made of React components. Craft.js comes only with the building blocks for a page editor; it provides a drag-n-drop system and handles the way user components should be rendered, updated and moved, among other things. <br /> <br /> You control the way your editor looks and behave."
-                    ></Text>
-                  </Element>
-                </Element>
+          Create Project
+        </Button>
 
-                <Element
-                  canvas
-                  is={Container}
-                  background={{ r: 39, g: 41, b: 41, a: 1 }}
-                  flexDirection="column"
-                  width="100%"
-                  height="auto"
-                  padding={['40', '40', '40', '40']}
-                  margin={['0', '0', '40', '0']}
-                  custom={{ displayName: 'ComplexSection' }}
-                >
-                  <Element
-                    canvas
-                    background={{
-                      r: 76,
-                      g: 78,
-                      b: 78,
-                      a: 0,
-                    }}
-                    is={Container}
-                    flexDirection="row"
-                    margin={['0', '0', '0', '0']}
-                    width="100%"
-                    height="auto"
-                    alignItems="center"
-                    custom={{ displayName: 'Wrapper' }}
-                  >
-                    <Element
-                      canvas
-                      background={{
-                        r: 0,
-                        g: 0,
-                        b: 0,
-                        a: 0,
-                      }}
-                      is={Container}
-                      alignItems="center"
-                      padding={['0', '0', '0', '0']}
-                      flexDirection="row"
-                      width="350px"
-                      height="250px"
-                      custom={{ displayName: 'Square' }}
-                    >
-                      <Element
-                        canvas
-                        is={Container}
-                        justifyContent="center"
-                        alignItems="center"
-                        background={{
-                          r: 76,
-                          g: 78,
-                          b: 78,
-                          a: 1,
-                        }}
-                        shadow={25}
-                        width="90%"
-                        height="90%"
-                        padding={['10', '20', '10', '20']}
-                        custom={{ displayName: 'Outer' }}
-                      >
-                        <Element
-                          canvas
-                          is={Container}
-                          justifyContent="center"
-                          alignItems="center"
-                          background={{
-                            r: 76,
-                            g: 78,
-                            b: 78,
-                            a: 1,
-                          }}
-                          shadow={50}
-                          width="80%"
-                          height="80%"
-                          padding={['10', '20', '10', '20']}
-                          custom={{ displayName: 'Middle' }}
-                        >
-                          <Element
-                            canvas
-                            is={Container}
-                            justifyContent="center"
-                            alignItems="center"
-                            background={{
-                              r: 76,
-                              g: 78,
-                              b: 78,
-                              a: 1,
-                            }}
-                            shadow={50}
-                            width="60%"
-                            height="60%"
-                            padding={['10', '20', '10', '20']}
-                            custom={{ displayName: 'Inner' }}
-                          />
-                        </Element>
-                      </Element>
-                    </Element>
-                    <Element
-                      canvas
-                      background={{
-                        r: 0,
-                        g: 0,
-                        b: 0,
-                        a: 0,
-                      }}
-                      is={Container}
-                      padding={['0', '0', '0', '20']}
-                      flexDirection="column"
-                      width="55%"
-                      height="100%"
-                      fillSpace="yes"
-                      custom={{ displayName: 'Content' }}
-                    >
-                      <Text
-                        color={{
-                          r: '255',
-                          g: '255',
-                          b: '255',
-                          a: '1',
-                        }}
-                        margin={['0', '0', '18', '0']}
-                        fontSize="20"
-                        text="Design complex components"
-                      ></Text>
-                      <Text
-                        color={{
-                          r: '255',
-                          g: '255',
-                          b: '255',
-                          a: '0.8',
-                        }}
-                        fontSize="14"
-                        fontWeight="400"
-                        text="You can define areas within your React component which users can drop other components into. <br/><br />You can even design how the component should be edited — content editable, drag to resize, have inputs on toolbars — anything really."
-                      ></Text>
-                    </Element>
-                  </Element>
-                </Element>
-                <Element
-                  canvas
-                  is={Container}
-                  background={{
-                    r: 234,
-                    g: 245,
-                    b: 245,
-                    a: 1,
+        {/* List of Projects */}
+        <Box sx={{ flexGrow: 1 }}>
+          <Grid container spacing={3}>
+            {projects.map((project, index) => (
+              <Grid item xs={12} sm={6} md={4} key={project.id}>
+                <Card 
+                  sx={{ 
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    cursor: 'pointer',
+                    '&:hover': { 
+                      boxShadow: 6,
+                      transform: 'translateY(-4px)',
+                      transition: 'all 0.3s ease-in-out'
+                    }
                   }}
-                  flexDirection="column"
-                  width="100%"
-                  height="auto"
-                  padding={['40', '40', '40', '40']}
-                  margin={['0', '0', '40', '0']}
-                  custom={{ displayName: 'Programmatic' }}
+                  onClick={() => handleProjectClick(project.id)}
+                  onDoubleClick={() => handleOpenDialog(project)}
                 >
-                  <Element
-                    canvas
-                    background={{
-                      r: 76,
-                      g: 78,
-                      b: 78,
-                      a: 0,
+                  <Box
+                    sx={{
+                      p: 2,
+                      background: `hsl(${(index * 137.5) % 360}deg, 70%, 85%)`,
+                      borderTopLeftRadius: 'inherit',
+                      borderTopRightRadius: 'inherit',
                     }}
-                    is={Container}
-                    flexDirection="column"
-                    margin={['0,', '0', '20', '0']}
-                    width="100%"
-                    height="auto"
-                    custom={{ displayName: 'Heading' }}
                   >
-                    <Text
-                      color={{
-                        r: '46',
-                        g: '47',
-                        b: '47',
-                        a: '1',
+                    <Typography variant="h6" component="h2" gutterBottom>
+                      {project.name}
+                    </Typography>
+                  </Box>
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Typography variant="body2" color="text.secondary">
+                      {project.description || 'No description'}
+                    </Typography>
+                  </CardContent>
+                  <CardActions sx={{ justifyContent: 'space-between', padding: 2 }}>
+                    <IconButton
+                      size="small"
+                      color="error"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (window.confirm('Are you sure you want to delete this project?')) {
+                          deleteProject(project.id);
+                        }
                       }}
-                      fontSize="23"
-                      text="Programmatic drag &amp; drop"
-                    ></Text>
-                    <Text
-                      fontSize="14"
-                      fontWeight="400"
-                      text="Govern what goes in and out of your components"
-                    ></Text>
-                  </Element>
-                  <Element
-                    canvas
-                    background={{
-                      r: 76,
-                      g: 78,
-                      b: 78,
-                      a: 0,
-                    }}
-                    is={Container}
-                    flexDirection="row"
-                    margin={['30', '0', '0', '0']}
-                    width="100%"
-                    height="auto"
-                    custom={{ displayName: 'Content' }}
-                  >
-                    <Element
-                      canvas
-                      background={{
-                        r: 0,
-                        g: 0,
-                        b: 0,
-                        a: 0,
-                      }}
-                      is={Container}
-                      padding={['0', '20', '0', '0']}
-                      flexDirection="row"
-                      width="45%"
-                      custom={{ displayName: 'Left' }}
                     >
-                      <Custom1
-                        background={{
-                          r: 119,
-                          g: 219,
-                          b: 165,
-                          a: 1,
-                        }}
-                        height="auto"
-                        width="100%"
-                        padding={['20', '20', '20', '20']}
-                        margin={['0', '0', '0', '0']}
-                        shadow={40}
-                      />
-                    </Element>
-                    <Element
-                      canvas
-                      background={{
-                        r: 0,
-                        g: 0,
-                        b: 0,
-                        a: 0,
+                      <FontAwesomeIcon icon={faTrash} />
+                    </IconButton>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleProjectClick(project.id);
                       }}
-                      is={Container}
-                      padding={['0', '0', '0', '20']}
-                      flexDirection="column"
-                      width="55%"
-                      custom={{ displayName: 'Right' }}
+                      disabled={loadingProjectId === project.id}
+                      sx={{ minWidth: '80px' }}
                     >
-                      <Custom2
-                        background={{
-                          r: 108,
-                          g: 126,
-                          b: 131,
-                          a: 1,
-                        }}
-                        height="125px"
-                        width="100%"
-                        padding={['0', '0', '0', '20']}
-                        margin={['0', '0', '0', '0']}
-                        shadow={40}
-                        flexDirection="row"
-                        alignItems="center"
-                      />
-                      <Custom3
-                        background={{
-                          r: 134,
-                          g: 187,
-                          b: 201,
-                          a: 1,
-                        }}
-                        height="auto"
-                        width="100%"
-                        padding={['20', '20', '20', '20']}
-                        margin={['20', '0', '0', '0']}
-                        shadow={40}
-                        flexDirection="column"
-                      />
-                    </Element>
-                  </Element>
-                </Element>
-              </Element>
-            </Frame>
-          </Viewport>
-        </Editor>
-      </div>
-    </ThemeProvider>
-  );
-}
+                      {loadingProjectId === project.id ? (
+                        <CircularProgress size={20} color="inherit" />
+                      ) : (
+                        'Open'
+                      )}
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+      </Box>
 
-export default App;
+      {/* Dialog for creating/editing a project */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>{editingProject ? 'Edit Project' : 'Create Project'}</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Project Name"
+            fullWidth
+            value={projectName}
+            onChange={(e) => setProjectName(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Description"
+            fullWidth
+            multiline
+            rows={4}
+            value={projectDescription}
+            onChange={(e) => setProjectDescription(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={handleSaveProject} variant="contained">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+};
+
+export default Home;

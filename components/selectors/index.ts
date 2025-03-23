@@ -7,3 +7,5 @@ export * from './Slider';
 export * from './Switch';
 export * from './TransferList';
 export * from './Card';
+export * from './Avatar';
+export * from './Button'
