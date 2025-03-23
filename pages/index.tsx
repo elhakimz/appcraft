@@ -5,7 +5,6 @@ import {
   Box,
   Typography,
   Button,
-  List,
   ListItem,
   ListItemText,
   Dialog,
