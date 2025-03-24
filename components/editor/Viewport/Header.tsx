@@ -1,8 +1,10 @@
 import { useEditor } from '@craftjs/core';
 import { Tooltip } from '@mui/material';
 import cx from 'classnames';
-import React from 'react';
+import React, { useContext } from 'react';
 import { styled } from 'styled-components';
+import { useRouter } from 'next/router';
+import { useProjectStore } from 'store/projectStore';
 
 import Checkmark from '../../../public/icons/check.svg';
 import Customize from '../../../public/icons/customize.svg';
@@ -52,11 +54,15 @@ const Item = styled.a<{ disabled?: boolean }>`
 `;
 
 export const Header = () => {
-  const { enabled, canUndo, canRedo, actions } = useEditor((state, query) => ({
+  const { enabled, canUndo, canRedo, actions, query } = useEditor((state, query) => ({
     enabled: state.options.enabled,
     canUndo: query.history.canUndo(),
     canRedo: query.history.canRedo(),
   }));
+  
+  const router = useRouter();
+  const { projectId, appId, pageId } = router.query;
+  const { updatePage } = useProjectStore();
 
   return (
     <HeaderDiv className="header text-white transition w-full">
@@ -85,6 +91,14 @@ export const Header = () => {
               },
             ])}
             onClick={() => {
+              // If currently enabled and about to finish editing, save the content
+              if (enabled && projectId && appId && pageId && 
+                  !Array.isArray(projectId) && !Array.isArray(appId) && !Array.isArray(pageId)) {
+                const json = query.serialize();
+                updatePage(projectId, appId, pageId, { content: json });
+              }
+              
+              // Toggle edit mode
               actions.setOptions((options) => (options.enabled = !enabled));
             }}
           >

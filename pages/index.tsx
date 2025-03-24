@@ -1,12 +1,9 @@
-import { NextSeo } from 'next-seo';
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import {
   Box,
   Typography,
   Button,
-  ListItem,
-  ListItemText,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -91,15 +88,6 @@ const Home = () => {
   
   return (
     <div className="h-full h-screen">
-      <NextSeo
-        title="AppCraft"
-        description="A drag-and-drop page editor for building apps."
-        canonical="https://appcraft.org/"
-        twitter={{
-          site: 'appcraft.org',
-          cardType: 'summary_large_image',
-        }}
-      />
 
       {/* Project Management UI */}
       <Box sx={{ padding: '20px' }}>
